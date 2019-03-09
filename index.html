@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WechatSnsViewer</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/fancybox/3.5.6/jquery.fancybox.min.js"></script>
+    <link href="https://cdn.bootcss.com/fancybox/3.5.6/jquery.fancybox.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: "PingFangSC-Regular", "Hiragino Sans GB", "Microsofy YaHei", "WenQuanYi Micro Hei", sans-serif;
+            font-size: 14px;
+            color: #616161;
+        }
+        .snsContainer {
+            margin: 15px;
+            padding: 15px;
+            border-bottom: solid 1px #eee;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 20px;
+        }
+        .authorName {
+            margin-bottom: 10px;
+            color: #858585;
+            background: #e6e6e6;
+            display: inline-block;
+            padding: 3px 5px;
+            border-radius: 3px;
+        }
+        .content {
+            margin-top: 5px;
+        }
+        .timestamp {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .imagesContainer {
+            margin: 5px 0;
+        }
+        .media {
+            width: 180px;
+            height: 180px;
+            margin: 5px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        function formatTime(timestamp) {
+            var date = new Date(timestamp * 1000);
+            return date.toLocaleString();
+        }
+
+        $.getJSON("./datas/data.json", function (data) {
+            data.forEach(ele => {
+                var authorName = ele.authorName;
+                var content = ele.content;
+                var timestamp = ele.timestamp;
+                var mediaFile = ele.mediaFile;
+                var snsContainer = $("<div/>", {class: "snsContainer"});
+                var imagesContainer = $("<div/>", {class: "imagesContainer"});
+                $("<div/>", {class: "authorName"}).text(authorName).appendTo(snsContainer);
+                $("<div/>", {class: "content"}).text(content).appendTo(snsContainer);
+                mediaFile.forEach(media => {
+                    var imgContainer = $("<a/>", {class: "imgContainer"});
+                    imgContainer
+                        .attr('data-fancybox', 'gallery')
+                        .attr('data-caption', content)
+                        .attr('href', "./datas/" + media);
+                    $("<div/>", {class: "media"})
+                        .css('background-image', "url('" + "./datas/" + media +"')")
+                        .appendTo(imgContainer);
+                    imgContainer.appendTo(imagesContainer);
+                    console.log(media);
+                });
+                imagesContainer.appendTo(snsContainer);
+                $("<div/>", {class: "timestamp"}).text(formatTime(timestamp)).appendTo(snsContainer);
+                snsContainer.appendTo("#app");
+            });
+        });
+    </script>
+</body>
+</html>
